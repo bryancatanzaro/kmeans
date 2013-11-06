@@ -3,8 +3,8 @@
 #include "timer.h"
 #include "util.h"
 #include <iostream>
-
 #include <cstdlib>
+#include <typeinfo>
 
 template<typename T>
 void fill_array(T& array, int m, int n) {
@@ -15,10 +15,11 @@ void fill_array(T& array, int m, int n) {
     }
 }
 
-void random_data(thrust::device_vector<double>& array, int m, int n) {
-    thrust::host_vector<double> host_array(m*n);
+template<typename T>
+void random_data(thrust::device_vector<T>& array, int m, int n) {
+    thrust::host_vector<T> host_array(m*n);
     for(int i = 0; i < m * n; i++) {
-        host_array[i] = (double)rand()/(double)RAND_MAX;
+        host_array[i] = (T)rand()/(T)RAND_MAX;
     }
     array = host_array;
 }
@@ -120,7 +121,35 @@ void more_tiny_test() {
 
 }
 
+template<typename T>
+void huge_test() {
 
+    int iterations = 50;
+    int n = 1e6;
+    int d = 50;
+    int k = 100;
+
+    thrust::device_vector<T> data(n * d);
+    thrust::device_vector<int> labels(n);
+    thrust::device_vector<T> centroids(k * d);
+    thrust::device_vector<T> distances(n);
+    
+    std::cout << "Generating random data" << std::endl;
+    std::cout << "Number of points: " << n << std::endl;
+    std::cout << "Number of dimensions: " << d << std::endl;
+    std::cout << "Number of clusters: " << k << std::endl;
+    std::cout << "Number of iterations: " << iterations << std::endl;
+    std::cout << "Precision: " << typeid(T).name() << std::endl;
+    
+    random_data(data, n, d);
+    random_labels(labels, n, k);
+    kmeans::timer t;
+    t.start();
+    kmeans::kmeans(iterations, n, d, k, data, labels, centroids, distances);
+    float time = t.stop();
+    std::cout << "  Time: " << time/1000.0 << " s" << std::endl;
+
+}
 
 int main() {
     std::cout << "Input a character to choose a test:" << std::endl;
@@ -141,29 +170,18 @@ int main() {
     default:
         std::cout << "Choice not understood, running huge test" << std::endl;
     }
-    int iterations = 50;
-    int n = 1e6;
-    int d = 50;
-    int k = 100;
-
-    thrust::device_vector<double> data(n * d);
-    thrust::device_vector<int> labels(n);
-    thrust::device_vector<double> centroids(k * d);
-    thrust::device_vector<double> distances(n);
-    
-    std::cout << "Generating random data" << std::endl;
-    std::cout << "Number of points: " << n << std::endl;
-    std::cout << "Number of dimensions: " << d << std::endl;
-    std::cout << "Number of clusters: " << k << std::endl;
-    std::cout << "Number of iterations: " << iterations << std::endl;
-    
-    random_data(data, n, d);
-    random_labels(labels, n, k);
-    kmeans::timer t;
-    t.start();
-    kmeans::kmeans(iterations, n, d, k, data, labels, centroids, distances);
-    float time = t.stop();
-    std::cout << "  Time: " << time/1000.0 << " s" << std::endl;
-
+    std::cout << "Double precision (d) or single precision (f): " << std::endl;
+    std::cin >> c;
+    switch(c) {
+    case 'd':
+        huge_test<double>();
+        exit(0);
+    case 'f':
+        break;
+    default:
+        std::cout << "Choice not understood, running single precision"
+                  << std::endl;
+    }
+    huge_test<float>();
     
 }
