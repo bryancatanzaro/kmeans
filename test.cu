@@ -126,8 +126,8 @@ void huge_test() {
 
     int iterations = 50;
     int n = 1e6;
-    int d = 50;
-    int k = 100;
+    int d = 64;
+    int k = 128;
 
     thrust::device_vector<T> data(n * d);
     thrust::device_vector<int> labels(n);
