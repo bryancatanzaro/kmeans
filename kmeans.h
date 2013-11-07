@@ -55,7 +55,6 @@ int kmeans(int iterations,
     thrust::device_vector<T> centroid_dots(n);
     thrust::device_vector<T> pairwise_distances(n * k);
     
-    detail::labels_init();
     detail::make_self_dots(n, d, data, data_dots);
 
     if (init_from_labels) {

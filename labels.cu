@@ -3,16 +3,28 @@
 namespace kmeans {
 namespace detail {
 
-cublasHandle_t cublas_handle;
-
-void labels_init() {
-    cublasStatus_t stat;
-    stat = cublasCreate(&detail::cublas_handle);
-    if (stat != CUBLAS_STATUS_SUCCESS) {
-        std::cout << "CUBLAS initialization failed" << std::endl;
-        exit(1);
+struct cublas_state {
+    cublasHandle_t cublas_handle;
+    cublas_state() {
+        cublasStatus_t stat;
+        stat = cublasCreate(&cublas_handle);
+        if (stat != CUBLAS_STATUS_SUCCESS) {
+            std::cout << "CUBLAS initialization failed" << std::endl;
+            exit(1);
+        }
     }
-}
+    ~cublas_state() {
+        cublasStatus_t stat;
+        stat = cublasDestroy(cublas_handle);
+        if (stat != CUBLAS_STATUS_SUCCESS) {
+            std::cout << "CUBLAS destruction failed" << std::endl;
+            exit(1);
+        }
+    }
+};
+
+
+cublas_state state;
 
 void gemm(cublasOperation_t transa,
           cublasOperation_t transb,
@@ -22,7 +34,7 @@ void gemm(cublasOperation_t transa,
           const float *B, int ldb,
           const float *beta,
           float *C, int ldc) {
-    cublasStatus_t status = cublasSgemm(cublas_handle, transa, transb,
+    cublasStatus_t status = cublasSgemm(state.cublas_handle, transa, transb,
                                         m, n, k, alpha,
                                         A, lda,
                                         B, ldb,
@@ -42,7 +54,7 @@ void gemm(cublasOperation_t transa,
                     const double *B, int ldb,
                     const double *beta,
                     double *C, int ldc) {
-    cublasStatus_t status = cublasDgemm(cublas_handle, transa, transb,
+    cublasStatus_t status = cublasDgemm(state.cublas_handle, transa, transb,
                                         m, n, k, alpha,
                                         A, lda,
                                         B, ldb,

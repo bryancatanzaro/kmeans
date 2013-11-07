@@ -6,8 +6,6 @@
 namespace kmeans {
 namespace detail {
 
-void labels_init();
-
 //n: number of points
 //d: dimensionality of points
 //data: points, laid out in row-major order (n rows, d cols)
