@@ -2,7 +2,6 @@
 #include <thrust/device_vector.h>
 #include "centroids.h"
 #include "labels.h"
-#include "util.h"
 #include <thrust/reduce.h>
 
 namespace kmeans {
