@@ -47,13 +47,13 @@ void gemm(cublasOperation_t transa,
 }
 
 void gemm(cublasOperation_t transa,
-                    cublasOperation_t transb,
-                    int m, int n, int k,
-                    const double *alpha,
-                    const double *A, int lda,
-                    const double *B, int ldb,
-                    const double *beta,
-                    double *C, int ldc) {
+          cublasOperation_t transb,
+          int m, int n, int k,
+          const double *alpha,
+          const double *A, int lda,
+          const double *B, int ldb,
+          const double *beta,
+          double *C, int ldc) {
     cublasStatus_t status = cublasDgemm(state.cublas_handle, transa, transb,
                                         m, n, k, alpha,
                                         A, lda,

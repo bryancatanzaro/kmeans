@@ -1,10 +1,20 @@
 #include <thrust/device_vector.h>
 #include "kmeans.h"
 #include "timer.h"
-#include "util.h"
 #include <iostream>
 #include <cstdlib>
 #include <typeinfo>
+
+template<typename T>
+void print_array(T& array, int m, int n) {
+    for(int i = 0; i < m; i++) {
+        for(int j = 0; j < n; j++) {
+            typename T::value_type value = array[i * n + j];
+            std::cout << value << " ";
+        }
+        std::cout << std::endl;
+    }
+}
 
 template<typename T>
 void fill_array(T& array, int m, int n) {
