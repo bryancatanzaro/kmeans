@@ -141,7 +141,7 @@ __global__ void make_new_labels(int n, int k, T* pairwise_distances,
             }
         }
         labels[global_id] = min_idx;
-        distances[global_id] = min_distance;
+        distances[global_id] = sqrt(min_distance);
         if (old_label != min_idx) {
             atomicAdd(changes, 1);
         }
