@@ -1,8 +1,8 @@
 kmeans
 ======
 
-A simple kmeans clustering implementation for double precision data,
-written for CUDA GPUs.
+A simple kmeans clustering implementation for single and
+double precision data, written for CUDA GPUs.
 
 There are two ideas here:
 
@@ -21,4 +21,7 @@ than 20% of the overall runtime of the algorithm.
 The CUDA code here is purposefully non-optimized - this code is not
 meant to be the fastest possible kmeans implementation, but rather to
 show how using libraries like thrust and BLAS can provide reasonable
-performance with high programmer productivity.
+performance with high programmer productivity. Although this code is
+simple, it is still high performance - we have measured it running at
+up to 8x the rate of other CUDA kmeans implementations on the same
+hardware. This is because we use a more efficient algorithm.
